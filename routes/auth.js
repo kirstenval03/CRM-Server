@@ -79,8 +79,8 @@ router.post("/login", (req, res, next) => {
       const passwordCorrect = bcrypt.compareSync(password, foundUser.password);
 
       if (passwordCorrect) {
-        const { email, _id, firstName, lastName, username, isE3 } = foundUser;
-        const payload = { email, _id, firstName, lastName, username, isE3 };
+        const { email, _id, firstName, lastName, isE3 } = foundUser;
+        const payload = { email, _id, firstName, lastName, isE3 };
         const authToken = jwt.sign(payload, process.env.SECRET, {
           algorithm: "HS256",
           expiresIn: "6h",
