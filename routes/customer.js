@@ -1,17 +1,17 @@
 var express = require('express');
 var router = express.Router();
 
-const Client = require('../models/Client');
+const Customer = require('../models/Customer');
 
 const isAuthenticated = require('../middleware/isAuthenticated');
-const isClientOwner = require("../middleware/isCustomerOwner");
+const isCustomerOwner = require("../middleware/isCustomerOwner")
 
-//DISPLAY ALL CLIENTS 
+//DISPLAY ALL CUSTOMERS
 router.get('/', (req, res, next) => {
   
-    Client.find()
-        .then((allClients) => {
-            res.json(allClients)
+    Customer.find()
+        .then((allCustomers) => {
+            res.json(allCustomers)
         })
         .catch((err) => {
             console.error(err); 
@@ -21,17 +21,17 @@ router.get('/', (req, res, next) => {
 });
 
 
-//SEE CLIENT DETAILS
-router.get('/client-detail/:clientId', (req, res, next) => {
-    const { clientId } = req.params;
+//SEE CUSTOMER DETAILS
+router.get('/customer-detail/:customerId', (req, res, next) => {
+    const { customerId } = req.params;
 
-    Client.findById(clientId)
+    Customer.findById(customerId)
         .populate({
             path: 'comments',
             populate: { path: 'author' }
         })
-        .then((foundClient) => {
-            res.json(foundClient);
+        .then((foundCustomer) => {
+            res.json(foundCustomer);
         })
         .catch((err) => {
             console.log(err);
@@ -39,13 +39,13 @@ router.get('/client-detail/:clientId', (req, res, next) => {
         });
 });
 
-//CREATE A NEW CLIENT
-router.post('/new-client', isAuthenticated, (req, res, next) => {
-    console.log("Received POST request at /new-client");
+//CREATE A NEW CUSTOMER
+router.post('/new-customer', isAuthenticated, (req, res, next) => {
+    console.log("Received POST request at /new-customer");
 
     const { firstName, lastName, email, phone, source, coach } = req.body
 
-    Client.create(
+    Customer.create(
         { 
             firstName,
             lastName,
@@ -55,8 +55,8 @@ router.post('/new-client', isAuthenticated, (req, res, next) => {
             coach
         }
         )
-        .then((newClient) => {
-            res.json(newClient)
+        .then((newCustomer) => {
+            res.json(newCustomer)
         })
         .catch((err) => {
             console.log(err)
@@ -66,15 +66,15 @@ router.post('/new-client', isAuthenticated, (req, res, next) => {
 })
 
 
-//UPDATE Client INFO
-router.post('/client-update/:clientId', isAuthenticated, isClientOwner, (req, res, next) => {
+//UPDATE CUSTOMER INFO
+router.post('/customer-update/:customerId', isAuthenticated, isCustomerOwner, (req, res, next) => {
 
-    const { clientId } = req.params
+    const { customerId } = req.params
 
     const { firstName, lastName, email, phone, source, coach } = req.body
 
-    Client.findByIdAndUpdate(
-        clientId,
+    Customer.findByIdAndUpdate(
+        customerId,
         {
             firstName,
             lastName,
@@ -85,8 +85,8 @@ router.post('/client-update/:clientId', isAuthenticated, isClientOwner, (req, re
         },
         { new: true}
     )
-        .then((updatedClient) => {
-            res.json(updatedClient)
+        .then((updatedCustomer) => {
+            res.json(updatedCustomer)
         })
         .catch((err) => {
             console.log(err)

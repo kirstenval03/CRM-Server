@@ -11,7 +11,7 @@ var authRouter = require('./routes/auth');
 var usersRouter = require('./routes/users');
 var clientRouter = require('./routes/client');
 var eventRouter = require('./routes/event');
-var customerRouter = requiere('./routes/customer')
+var customerRouter = require('./routes/customer')
 
 var app = express();
 
