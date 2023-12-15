@@ -5,12 +5,10 @@ const customerSchema = new Schema({
     lastName:String,
     email:String,
     phone:String, 
-    source: String,
-    coach: {
-        type: Schema.Types.ObjectId,
-        ref: 'User',
-    },
-    leadStatus:String,
+    vip: Boolean,
+    revenue: Number,
+    date: Date,
+    utmSource:String,
 },{
     timestamps: true
 }
