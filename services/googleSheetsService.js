@@ -6,16 +6,16 @@ const sheets = google.sheets('v4');
 const API_KEY = process.env.GOOGLE_SHEETS_API_KEY; 
 
 const spreadsheetId = '1Guueh-T_u6FaaANjoAMbY_N9vfGxdYt9oNd_F6aqhpg'; // Replace with your Spreadsheet ID
-const range = 'Registrations!B2:K'; // e.g., 'Sheet1!A2:H'
+const range = 'Registrations!B2:K'; 
 
 const columnMapping = {
     'FIRST NAME': 'firstName',
     'LAST NAME': 'lastName',
     'EMAIL': 'email',
     'PHONE': 'phone',
-    'VIP': 'vip',
     'TICKET REVENUE': 'revenue',
     'DATE': 'date',
+    'VIP': 'vip',
     'UTM SOURCE': 'utmSource', 
 };
 
@@ -37,7 +37,15 @@ async function fetchAndSaveCustomerData() {
                     const columnName = response.data.values[0][index]; // Column name from header row
                     const schemaFieldName = columnMapping[columnName];
                     if (schemaFieldName) {
-                        newCustomerData[schemaFieldName] = cell;
+                        if (schemaFieldName === 'vip') {
+                            newCustomerData[schemaFieldName] = cell.toUpperCase() === 'TRUE'; // Convert string to Boolean
+                        } else if (schemaFieldName === 'revenue') {
+                            newCustomerData[schemaFieldName] = parseFloat(cell) || 0; // Convert string to number
+                        } else if (schemaFieldName === 'date') {
+                            newCustomerData[schemaFieldName] = new Date(cell); // Convert string to Date
+                        } else {
+                            newCustomerData[schemaFieldName] = cell;
+                        }
                     }
                 });
 
