@@ -3,7 +3,7 @@ const Customer = require('../models/Customer');
 
 const sheets = google.sheets('v4');
 
-const apiKey = process.env.GOOGLE_SHEETS_API_KEY; 
+const API_KEY = process.env.GOOGLE_SHEETS_API_KEY; 
 
 const spreadsheetId = '1Guueh-T_u6FaaANjoAMbY_N9vfGxdYt9oNd_F6aqhpg'; // Replace with your Spreadsheet ID
 const range = 'Registrations!B2:K'; // e.g., 'Sheet1!A2:H'
@@ -24,7 +24,7 @@ async function fetchAndSaveCustomerData() {
         const response = await sheets.spreadsheets.values.get({
             spreadsheetId,
             range,
-            key: apiKey,
+            key: API_KEY,
         });
 
         const rows = response.data.values;
