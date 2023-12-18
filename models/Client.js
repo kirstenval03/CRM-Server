@@ -1,18 +1,12 @@
 const { Schema, model } = require('mongoose');
 
 const clientSchema = new Schema({
-    firstName:String,
-    lastName:String,
+    name:String,
+    company:String,
     email:String,
     phone:String, 
-    source: String,
-    coach: {
-        type: Schema.Types.ObjectId,
-        ref: 'User',
-    },
-    leadStatus:String,
-},{
-    timestamps: true
+}, {
+timestamps: true
 }
 )
 

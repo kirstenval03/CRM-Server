@@ -1,12 +1,29 @@
 const { Schema, model } = require('mongoose');
 
 const eventSchema = new Schema({
- client:String,
- event: String, 
- version: String,
- date: Date,
+    client: {
+        type: Schema.Types.ObjectId,
+        ref: 'Client', 
+    },
+    name: {
+        type: String,
+        required: true
+    },
+    startDate: {
+        type: Date,
+        required: true
+    },
+    endDate: {
+        type: Date,
+        required: true
+    },
+    description: String,
 }, {
-timestamps: true
+    timestamps: true
 });
 
-module.exports = model('Event', eventSchema )
+// Optional: Index for improved query performance
+eventSchema.index({ startDate: 1, endDate: 1 });
+
+module.exports = model('Event', eventSchema);
+

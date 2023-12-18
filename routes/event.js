@@ -2,23 +2,18 @@ var express = require('express');
 var router = express.Router();
 
 const Event = require('../models/Event');
-
 const isAuthenticated = require('../middleware/isAuthenticated');
-const isE3 = require("../middleware/isE3");
+const isAdmin = require("../middleware/isAdmin"); // Ensure this matches the actual file name
 
-
-
-//DISPLAY ALL EVENTS
+// DISPLAY ALL EVENTS
 router.get('/', (req, res, next) => {
-  
     Event.find()
-        .then((allEvents) => {
-            res.json(allEvents)
-        })
-        .catch((err) => {
-            console.error(err); 
-            next(err)
-        })
+        .populate('client') // Populate client details
+        .then(allEvents => res.json(allEvents))
+        .catch(err => {
+            console.error(err);
+            next(err);
+        });
 });
 
 // SEE EVENT DETAILS
@@ -26,80 +21,54 @@ router.get('/event-detail/:eventId', (req, res, next) => {
     const { eventId } = req.params;
 
     Event.findById(eventId)
-        .then((foundEvent) => {
+        .populate('client') // Populate client details
+        .then(foundEvent => {
+            if (!foundEvent) {
+                return res.status(404).send('Event not found');
+            }
             res.json(foundEvent);
         })
-        .catch((err) => {
+        .catch(err => {
             console.log(err);
             next(err);
         });
 });
 
-//CREATE A NEW EVENT
-router.post('/new-event', isAuthenticated, isE3, (req, res, next) => {
-    console.log("Received POST request at /new-event");
+// CREATE A NEW EVENT
+router.post('/new-event', isAuthenticated, isAdmin, (req, res, next) => {
+    const { client, name, startDate, endDate, description } = req.body;
 
-    const { client, event, version, date  } = req.body
+    Event.create({ client, name, startDate, endDate, description })
+        .then(newEvent => res.json(newEvent))
+        .catch(err => {
+            console.log(err);
+            next(err);
+        });
+});
 
-    Event.create(
-        { 
-           client,
-           event, 
-           version, 
-           date
-        }
-        )
-        .then((newEvent) => {
-            res.json(newEvent)
-        })
-        .catch((err) => {
-            console.log(err)
-            next(err)
-        })
+// UPDATE EVENT INFO
+router.post('/event-update/:eventId', isAuthenticated, isAdmin, (req, res, next) => {
+    const { eventId } = req.params;
+    const { client, name, startDate, endDate, description } = req.body;
 
-})
+    Event.findByIdAndUpdate(eventId, { client, name, startDate, endDate, description }, { new: true })
+        .then(updatedEvent => res.json(updatedEvent))
+        .catch(err => {
+            console.log(err);
+            next(err);
+        });
+});
 
-//UPDATE EVENT INFO
-router.post('/event-update/:eventId', isAuthenticated, isE3, (req, res, next) => {
-
-    const { eventId } = req.params
-
-    const { client, event, version, date } = req.body
-
-    Event.findByIdAndUpdate(
-        eventId,
-        {
-            client,
-            event, 
-            version, 
-            date
-        },
-        { new: true}
-    )
-        .then((updatedEvent) => {
-            res.json(updatedEvent)
-        })
-        .catch((err) => {
-            console.log(err)
-            next(err)
-        })
-
-})
-
-//DELETE EVENT
-router.post('/delete-event/:eventId', isAuthenticated, isE3, (req, res, next) => {
-
-    const { eventId } = req.params
+// DELETE EVENT
+router.post('/delete-event/:eventId', isAuthenticated, isAdmin, (req, res, next) => {
+    const { eventId } = req.params;
 
     Event.findByIdAndDelete(eventId)
-        .then((deletedEvent) => {
-            res.json(deletedEvent)
-        })
-        .catch((err) => {
-            console.log(err)
-            next(err)
-        })
-
-})
+        .then(deletedEvent => res.json(deletedEvent))
+        .catch(err => {
+            console.log(err);
+            next(err);
+        });
+});
 
 module.exports = router;
