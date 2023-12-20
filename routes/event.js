@@ -35,7 +35,7 @@ router.get('/event-detail/:eventId', (req, res, next) => {
 });
 
 // CREATE A NEW EVENT
-router.post('/new-event', isAuthenticated, isAdmin, (req, res, next) => {
+router.post('/new-event',(req, res, next) => {
     const { client, name, startDate, endDate, description } = req.body;
 
     Event.create({ client, name, startDate, endDate, description })
