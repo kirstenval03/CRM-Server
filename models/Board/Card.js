@@ -1,6 +1,6 @@
 const { Schema, model } = require('mongoose');
 
-const leadSchema = new Schema({
+const cardSchema = new Schema({
     name: String,
     email: String,
     coachName: String,
@@ -10,9 +10,11 @@ const leadSchema = new Schema({
         enum: ['yellow', 'green', 'red', ''],
         default: ''
     },
-    columnId: { type: Schema.Types.ObjectId, ref: 'Column' } // Reference to the column
+    columnId: { type: Schema.Types.ObjectId, ref: 'Column' },
+    description: String, 
+    position: Number // Add position field for card order within a column
 }, {
     timestamps: true
 });
 
-module.exports = model('Lead', leadSchema);
+module.exports = model('Card', cardSchema);

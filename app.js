@@ -12,7 +12,9 @@ var usersRouter = require('./routes/users');
 var clientRouter = require('./routes/client');
 var eventRouter = require('./routes/event');
 var customerRouter = require('./routes/customer');
-var leadRouter = require('./routes/lead')
+var leadRouter = require('./routes/lead');
+var columnRouter = require('./routes/column');
+var cardRouter = require('./routes/card')
 
 var app = express();
 
@@ -42,6 +44,8 @@ app.use('/event', eventRouter);
 app.use('/client', clientRouter);
 app.use('/customer', customerRouter);
 app.use('/leads', leadRouter );
+app.use('/column', columnRouter);
+app.use('/card', cardRouter);
 
 mongoose
   .connect(process.env.MONGODB_URI)
