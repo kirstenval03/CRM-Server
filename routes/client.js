@@ -1,97 +1,99 @@
 var express = require('express');
 var router = express.Router();
 
-const Client = require('../models/Client');
-
+const { Client } = require('../models/Data'); // Import the new Client schema
 const isAuthenticated = require('../middleware/isAuthenticated');
-const isClientOwner = require("../middleware/isCustomerOwner");
 
-//DISPLAY ALL CLIENTS 
+// DISPLAY ALL CLIENTS
 router.get('/', (req, res, next) => {
-  
-    Client.find()
-        .then((allClients) => {
-            res.json(allClients)
-        })
-        .catch((err) => {
-            console.error(err); 
-            next(err)
-        })
-
+  Client.find()
+    .then((allClients) => {
+      res.json(allClients);
+    })
+    .catch((err) => {
+      console.error(err);
+      next(err);
+    });
 });
 
-
-//SEE CLIENT DETAILS
+// SEE CLIENT DETAILS
 router.get('/client-detail/:clientId', (req, res, next) => {
-    const { clientId } = req.params;
+  const { clientId } = req.params;
 
-    Client.findById(clientId)
-        .populate({
-            path: 'comments',
-            populate: { path: 'author' }
-        })
-        .then((foundClient) => {
-            res.json(foundClient);
-        })
-        .catch((err) => {
-            console.log(err);
-            next(err);
-        });
+  Client.findById(clientId)
+    .then((foundClient) => {
+      if (!foundClient) {
+        return res.status(404).json({ message: 'Client not found' });
+      }
+      res.json(foundClient);
+    })
+    .catch((err) => {
+      console.log(err);
+      next(err);
+    });
 });
 
-//CREATE A NEW CLIENT
-router.post('/new-client', isAuthenticated, (req, res, next) => {
-    console.log("Received POST request at /new-client");
+// CREATE A NEW CLIENT
+router.post('/new-client',  (req, res, next) => {
+  console.log('Received POST request at /new-client');
 
-    const { firstName, lastName, email, phone, source, coach } = req.body
+  const { name, driveFolder, events } = req.body;
 
-    Client.create(
-        { 
-            firstName,
-            lastName,
-            email,
-            phone, 
-            source,
-            coach
-        }
-        )
-        .then((newClient) => {
-            res.json(newClient)
-        })
-        .catch((err) => {
-            console.log(err)
-            next(err)
-        })
+  Client.create({
+    name,
+    driveFolder,
+    events,
+  })
+    .then((newClient) => {
+      res.json(newClient);
+    })
+    .catch((err) => {
+      console.log(err);
+      next(err);
+    });
+});
 
-})
+// UPDATE CLIENT INFO
+router.post('/client-update/:clientId', (req, res, next) => {
+  const { clientId } = req.params;
 
+  const { name, driveFolder} = req.body;
 
-//UPDATE Client INFO
-router.post('/client-update/:clientId', isAuthenticated, isClientOwner, (req, res, next) => {
+  Client.findByIdAndUpdate(
+    clientId,
+    {
+      name,
+      driveFolder,
+    },
+    { new: true }
+  )
+    .then((updatedClient) => {
+      if (!updatedClient) {
+        return res.status(404).json({ message: 'Client not found' });
+      }
+      res.json(updatedClient);
+    })
+    .catch((err) => {
+      console.log(err);
+      next(err);
+    });
+});
 
-    const { clientId } = req.params
+// DELETE CLIENT
+router.delete('/delete-client/:clientId',  (req, res, next) => {
+  const { clientId } = req.params;
 
-    const { firstName, lastName, email, phone, source, coach } = req.body
-
-    Client.findByIdAndUpdate(
-        clientId,
-        {
-            firstName,
-            lastName,
-            email,
-            phone, 
-            source,
-            coach
-        },
-        { new: true}
-    )
-        .then((updatedClient) => {
-            res.json(updatedClient)
-        })
-        .catch((err) => {
-            console.log(err)
-            next(err)
-        })
-})
+  Client.findByIdAndDelete(clientId)
+    .then((deletedClient) => {
+      if (!deletedClient) {
+        return res.status(404).json({ message: 'Client not found' });
+      }
+      res.json({ message: 'Client deleted successfully' });
+    })
+    .catch((err) => {
+      console.error(err);
+      next(err);
+    });
+});
 
 module.exports = router;

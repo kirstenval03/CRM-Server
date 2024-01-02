@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
-const Customer = require('../models/Customer');
+const Customer = require('../models/Contact');
 const isAuthenticated = require('../middleware/isAuthenticated');
-const isCustomerOwner = require("../middleware/isCustomerOwner");
+const isCustomerOwner = require("../middleware/isContactOwner");
 const { fetchAndSaveCustomerData } = require('../services/googleSheetsService'); // Adjust the path as needed
 
 

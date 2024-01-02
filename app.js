@@ -2,19 +2,15 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
-var mongoose = require('mongoose')
-var cors = require('cors')
+var mongoose = require('mongoose');
+var cors = require('cors');
 
 var indexRouter = require('./routes/index');
 var authRouter = require('./routes/auth');
 var usersRouter = require('./routes/users');
 var clientRouter = require('./routes/client');
 var eventRouter = require('./routes/event');
-var customerRouter = require('./routes/customer');
-var leadRouter = require('./routes/lead');
-var columnRouter = require('./routes/column');
-var cardRouter = require('./routes/card')
+var contactRouter = require('./routes/contact'); // Import the new contact router
 
 var app = express();
 
@@ -28,24 +24,18 @@ app.set('trust proxy', 1);
 app.enable('trust proxy');
 
 app.use(
-    cors({
-      origin: [process.env.REACT_APP_URI]  // <== URL of our future React app
-    })
-  );
-
-// app.use(
-//     cors()
-//   );
+  cors({
+    origin: [process.env.REACT_APP_URI] // <== URL of your React app
+  })
+);
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter); 
+app.use('/users', usersRouter);
 app.use('/auth', authRouter);
 app.use('/event', eventRouter);
 app.use('/client', clientRouter);
-app.use('/customer', customerRouter);
-app.use('/leads', leadRouter );
-app.use('/column', columnRouter);
-app.use('/card', cardRouter);
+app.use('/contact', contactRouter); // Use the new contact router
+// ...
 
 mongoose
   .connect(process.env.MONGODB_URI)

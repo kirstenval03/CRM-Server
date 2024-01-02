@@ -1,5 +1,5 @@
 const { google } = require('googleapis');
-const Customer = require('../models/Customer'); 
+const Customer = require('../models/Contact'); 
 
 const sheets = google.sheets('v4');
 const API_KEY = process.env.GOOGLE_SHEETS_API_KEY; 

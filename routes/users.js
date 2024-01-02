@@ -19,9 +19,8 @@ router.get('/current', isAuthenticated, async (req, res) => {
     res.set('Pragma', 'no-cache');
     res.set('Expires', 0);
 
-    // Return the user data as JSON, excluding sensitive fields
-    const { firstName, lastName, role } = user.toObject();
-    res.json({ firstName, lastName, role }); // Ensure this is an object
+    // Return the user data as JSON
+    res.json(user); // You can include all user fields or just specific ones
   } catch (error) {
     console.error('Error fetching current user data:', error);
     res.status(500).json({ error: 'Internal Server Error' });

@@ -1,6 +1,5 @@
 const { Schema, model } = require('mongoose');
-const bcrypt = require('bcryptjs');
-const SALT_WORK_FACTOR = 10;
+
 
 const userRoles = {
     ADMIN: 'admin',
@@ -51,12 +50,6 @@ userSchema.pre('save', async function (next) {
         } else {
             this.role = userRoles.ACADEMY_MEMBER;
         }
-    }
-
-    // Only hash the password if it has been modified (or is new)
-    if (this.isModified('password')) {
-        const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
-        this.password = await bcrypt.hash(this.password, salt);
     }
 
     next();

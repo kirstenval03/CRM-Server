@@ -1,28 +1,19 @@
-const { Schema, model } = require('mongoose');
+// const { Schema, model } = require('mongoose');
 
-const eventSchema = new Schema({
-    client: {
-        type: String,
-    },
-    name: {
-        type: String,
-        required: true
-    },
-    startDate: {
-        type: Date,
-        required: true
-    },
-    endDate: {
-        type: Date,
-        required: true
-    },
-    description: String,
-}, {
-    timestamps: true
-});
+// const eventSchema = new Schema({
+//     name: String,
+//   initials: String,
+//   edition: Number,
+//   date: Date,
+//   driveFolder: String,
+//   active: Boolean,
+//   coaches: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+//   contacts: [contactSchema],
+// }, {
+//     timestamps: true
+// });
 
-// Optional: Index for improved query performance
-eventSchema.index({ startDate: 1, endDate: 1 });
 
-module.exports = model('Event', eventSchema);
+
+// module.exports = model('Event', eventSchema);
 

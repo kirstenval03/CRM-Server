@@ -1,11 +1,11 @@
 const { Schema, model } = require('mongoose');
 
 const clientSchema = new Schema({
-    name:String,
-    company:String,
-    email:String,
-    phone:String, 
-}, {
+    name: String,
+    driveFolder: String,
+    events: [eventSchema],
+}, 
+{
 timestamps: true
 }
 )
