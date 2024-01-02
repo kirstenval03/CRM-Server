@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-const { Event } = require('../models/Data'); // Import the new Event schema
+const { Event, Client } = require('../models/Data'); // Import both Event and Client schemas
 
 // DISPLAY ALL EVENTS
 router.get('/', (req, res, next) => {
@@ -31,23 +31,40 @@ router.get('/event-detail/:eventId', (req, res, next) => {
 });
 
 // CREATE A NEW EVENT
-router.post('/new-event', (req, res, next) => {
-  const { name, initials, edition, date, driveFolder, currentPhase, coaches } = req.body;
+router.post('/new-event', async (req, res, next) => {
+  try {
+    const { name, initials, edition, date, driveFolder, active, coaches, clientId } = req.body;
 
-  Event.create({ name, initials, edition, date, driveFolder, currentPhase, coaches })
-    .then(newEvent => res.json(newEvent))
-    .catch(err => {
-      console.log(err);
-      next(err);
-    });
+    // Create the event
+    const newEvent = new Event({ name, initials, edition, date, driveFolder, active, coaches });
+    const savedEvent = await newEvent.save();
+
+    // Find the client by clientId
+    const client = await Client.findById(clientId);
+
+    if (!client) {
+      return res.status(404).send('Client not found');
+    }
+
+    // Push the event into the client's events array
+    client.events.push(savedEvent);
+
+    // Save the updated client
+    await client.save();
+
+    res.status(201).json(savedEvent);
+  } catch (error) {
+    console.error('Error creating event:', error);
+    next(error);
+  }
 });
 
 // UPDATE EVENT INFO
 router.post('/event-update/:eventId', (req, res, next) => {
   const { eventId } = req.params;
-  const { name, initials, edition, date, driveFolder, currentPhase, coaches } = req.body;
+  const { name, initials, edition, date, driveFolder, active, coaches } = req.body;
 
-  Event.findByIdAndUpdate(eventId, { name, initials, edition, date, driveFolder, currentPhase, coaches }, { new: true })
+  Event.findByIdAndUpdate(eventId, { name, initials, edition, date, driveFolder, active, coaches }, { new: true })
     .then(updatedEvent => res.json(updatedEvent))
     .catch(err => {
       console.log(err);
@@ -68,3 +85,4 @@ router.post('/delete-event/:eventId', (req, res, next) => {
 });
 
 module.exports = router;
+

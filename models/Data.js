@@ -19,21 +19,28 @@ const contactSchema = new Schema({
 });
 
 const eventSchema = new Schema({
-  name: String,
-  initials: String,
-  edition: Number,
-  date: Date,
-  driveFolder: String,
-  currentPhase: Number,
-  coaches: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-  contacts: [contactSchema], // Embed contacts within events
+    client: {
+        clientId: { type: Schema.Types.ObjectId, ref: 'Client' },
+        clientName: String,
+    },
+    name: String,
+    initials: String,
+    edition: Number,
+    date: Date,
+    driveFolder: String,
+    active: Boolean,
+    coaches: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    contacts: [contactSchema], // Embed contacts within events
 });
 
 const clientSchema = new Schema({
-  name: String,
-  driveFolder: String,
-  events: [eventSchema], // Embed events within clients
-});
+    name: String,
+    driveFolder: String,
+    events: [{
+      type: Schema.Types.ObjectId,
+      ref: 'Event',
+    }],
+  });
 
 const Contact = mongoose.model('Contact', contactSchema);
 const Event = mongoose.model('Event', eventSchema);
