@@ -30,34 +30,36 @@ router.get('/event-detail/:eventId', (req, res, next) => {
     });
 });
 
+
 // CREATE A NEW EVENT
 router.post('/new-event', async (req, res, next) => {
-  try {
-    const { name, initials, edition, date, driveFolder, active, coaches, clientId } = req.body;
-
-    // Create the event
-    const newEvent = new Event({ name, initials, edition, date, driveFolder, active, coaches });
-    const savedEvent = await newEvent.save();
-
-    // Find the client by clientId
-    const client = await Client.findById(clientId);
-
-    if (!client) {
-      return res.status(404).send('Client not found');
+    try {
+      const { name, initials, edition, date, driveFolder, active, coaches, clientId } = req.body;
+  
+      // Create the event
+      const newEvent = new Event({ name, initials, edition, date, driveFolder, active, coaches });
+      const savedEvent = await newEvent.save();
+  
+      // Find the client by clientId
+      const client = await Client.findById(clientId);
+  
+      if (!client) {
+        return res.status(404).send('Client not found');
+      }
+  
+      // Push the event's ObjectId into the client's events array
+      client.events.push(savedEvent._id); // Use _id to store the ObjectId
+  
+      // Save the updated client
+      await client.save();
+  
+      res.status(201).json(savedEvent);
+    } catch (error) {
+      console.error('Error creating event:', error);
+      next(error);
     }
-
-    // Push the event into the client's events array
-    client.events.push(savedEvent);
-
-    // Save the updated client
-    await client.save();
-
-    res.status(201).json(savedEvent);
-  } catch (error) {
-    console.error('Error creating event:', error);
-    next(error);
-  }
-});
+  });
+  
 
 // UPDATE EVENT INFO
 router.post('/event-update/:eventId', (req, res, next) => {
