@@ -34,10 +34,20 @@ router.get('/event-detail/:eventId', (req, res, next) => {
 // CREATE A NEW EVENT
 router.post('/new-event', async (req, res, next) => {
     try {
-      const { name, initials, edition, date, driveFolder, active, coaches, clientId } = req.body;
+      const { name, initials, edition, date, driveFolder, active, coaches, clientId, clientName } = req.body;
   
       // Create the event
-      const newEvent = new Event({ name, initials, edition, date, driveFolder, active, coaches });
+      const newEvent = new Event({
+        client: { clientId, clientName }, // Include the client field
+        name,
+        initials,
+        edition,
+        date,
+        driveFolder,
+        active,
+        coaches,
+      });
+  
       const savedEvent = await newEvent.save();
   
       // Find the client by clientId
@@ -48,7 +58,7 @@ router.post('/new-event', async (req, res, next) => {
       }
   
       // Push the event's ObjectId into the client's events array
-      client.events.push(savedEvent._id); // Use _id to store the ObjectId
+      client.events.push(savedEvent._id);
   
       // Save the updated client
       await client.save();
@@ -59,6 +69,7 @@ router.post('/new-event', async (req, res, next) => {
       next(error);
     }
   });
+  
   
 
 // UPDATE EVENT INFO
