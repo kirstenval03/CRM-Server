@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
 
-const { Contact } = require('../models/Data'); // Import the new Contact schema
+const { Contact, Event } = require('../models/Data'); // Updated model imports
 const { fetchAndSaveContactData } = require('../services/gsWTB'); // Import the Google Sheets service
 
-// IMPORT CONTACTS FROM GOOGLE-SHEETS
-router.get('/import-from-google-sheets', async (req, res) => {
+// IMPORT CONTACTS FROM GOOGLE-SHEETS FOR A SPECIFIC EVENT
+router.get('/import-from-google-sheets/:eventId', async (req, res) => {
   try {
-    await fetchAndSaveContactData();
+    const { eventId } = req.params;
+    await fetchAndSaveContactData(eventId);
     res.send('Contact data import initiated');
   } catch (error) {
     console.error('Error importing contact data:', error);
@@ -15,15 +16,22 @@ router.get('/import-from-google-sheets', async (req, res) => {
   }
 });
 
-// LIST ALL CONTACTS
-router.get('/', (req, res, next) => {
-  Contact.find()
-    .then((allContacts) => {
-      res.json(allContacts);
-    })
-    .catch((err) => {
-      console.error(err);
-      next(err);
+// LIST ALL CONTACTS FOR A SPECIFIC EVENT
+router.get('/:eventId', (req, res, next) => {
+  const { eventId } = req.params;
+
+  Event.findById(eventId)
+    .populate('contacts')
+    .exec((err, event) => {
+      if (err) {
+        console.error(err);
+        next(err);
+      } else {
+        if (!event) {
+          return res.status(404).json({ message: 'Event not found' });
+        }
+        res.json(event.contacts);
+      }
     });
 });
 
@@ -44,27 +52,35 @@ router.get('/contact-detail/:contactId', (req, res, next) => {
     });
 });
 
-// CREATE A NEW CONTACT
-router.post('/new-contact', (req, res, next) => {
+// CREATE A NEW CONTACT FOR A SPECIFIC EVENT
+router.post('/new-contact/:eventId', async (req, res, next) => {
+  const { eventId } = req.params;
   const { name, email, phone, source, leadOrRegistrant, assignedTo, statusColor, columnId } = req.body;
 
-  Contact.create({
-    name,
-    email,
-    phone,
-    source,
-    leadOrRegistrant,
-    assignedTo,
-    statusColor,
-    columnId,
-  })
-    .then((newContact) => {
-      res.json(newContact);
-    })
-    .catch((err) => {
-      console.log(err);
-      next(err);
+  try {
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+
+    const newContact = new Contact({
+      name,
+      email,
+      phone,
+      source,
+      leadOrRegistrant,
+      assignedTo,
+      statusColor,
+      columnId,
+      event: { eventId: event._id, eventName: event.name }, // Reference the event
     });
+
+    await newContact.save();
+    res.json(newContact);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
 });
 
 // UPDATE CONTACT INFO

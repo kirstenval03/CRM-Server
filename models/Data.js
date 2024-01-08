@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose; // Import Schema from Mongoose
 
 const contactSchema = new Schema({
+  event: {
+    eventId: { type: Schema.Types.ObjectId, ref: 'Event' }, // Reference the 'Event' model
+    eventName: { type: Schema.Types.ObjectId, ref: 'Event' }, // Reference the 'Event' model for event name
+  },
   name: String,
   email: String,
   phone: String,
