@@ -17,7 +17,7 @@ router.get('/import-from-google-sheets/:eventId', async (req, res) => {
 });
 
 // LIST ALL CONTACTS FOR A SPECIFIC EVENT
-router.get('/eventId', (req, res, next) => {
+router.get('/:eventId', (req, res, next) => {
   const { eventId } = req.params;
 
   Event.findById(eventId)
