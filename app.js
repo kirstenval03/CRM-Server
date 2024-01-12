@@ -12,6 +12,9 @@ var clientRouter = require('./routes/client');
 var eventRouter = require('./routes/event');
 var contactRouter = require('./routes/contact'); 
 
+var modulesRouter = require('./routes/modules'); 
+var lessonRouter = require('./routes/lesson'); 
+
 var app = express();
 
 app.use(logger('dev'));
@@ -35,6 +38,9 @@ app.use('/auth', authRouter);
 app.use('/event', eventRouter);
 app.use('/client', clientRouter);
 app.use('/contact', contactRouter); // Use the new contact router
+
+app.use('/modules', modulesRouter );
+app.use('/lesson', lessonRouter);
 // ...
 
 mongoose
