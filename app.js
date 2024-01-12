@@ -10,7 +10,7 @@ var authRouter = require('./routes/auth');
 var usersRouter = require('./routes/users');
 var clientRouter = require('./routes/client');
 var eventRouter = require('./routes/event');
-var contactRouter = require('./routes/contact'); // Import the new contact router
+var contactRouter = require('./routes/contact'); 
 
 var app = express();
 

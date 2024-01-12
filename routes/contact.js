@@ -17,26 +17,25 @@ router.get('/import-from-google-sheets/:eventId', async (req, res) => {
 });
 
 // LIST ALL CONTACTS FOR A SPECIFIC EVENT
-router.get('/:eventId', (req, res, next) => {
+router.get('/eventId', (req, res, next) => {
   const { eventId } = req.params;
 
   Event.findById(eventId)
     .populate('contacts')
-    .exec((err, event) => {
-      if (err) {
-        console.error(err);
-        next(err);
-      } else {
-        if (!event) {
-          return res.status(404).json({ message: 'Event not found' });
-        }
-        res.json(event.contacts);
+    .then((event) => {
+      if (!event) {
+        return res.status(404).json({ message: 'Event not found' });
       }
+      res.json(event.contacts);
+    })
+    .catch((err) => {
+      console.error(err);
+      next(err);
     });
 });
 
 // VIEW CONTACT DETAILS
-router.get('/contact-detail/:contactId', (req, res, next) => {
+router.get('/contact-detail/contactId', (req, res, next) => {
   const { contactId } = req.params;
 
   Contact.findById(contactId)
@@ -47,7 +46,7 @@ router.get('/contact-detail/:contactId', (req, res, next) => {
       res.json(foundContact);
     })
     .catch((err) => {
-      console.log(err);
+      console.error(err);
       next(err);
     });
 });
@@ -76,6 +75,11 @@ router.post('/new-contact/:eventId', async (req, res, next) => {
     });
 
     await newContact.save();
+
+    // Push the new contact's ID to the event's contacts array
+    event.contacts.push(newContact._id);
+    await event.save();
+
     res.json(newContact);
   } catch (err) {
     console.error(err);
@@ -110,7 +114,7 @@ router.post('/contact-update/:contactId', (req, res, next) => {
       res.json(updatedContact);
     })
     .catch((err) => {
-      console.log(err);
+      console.error(err);
       next(err);
     });
 });
