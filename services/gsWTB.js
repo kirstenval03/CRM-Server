@@ -1,25 +1,29 @@
 const { google } = require('googleapis');
-const { Event } = require('../models/Data'); // Updated model import
+const { Event, Contact } = require('../models/Data'); // Updated model import
 
 const sheets = google.sheets('v4');
 const API_KEY = process.env.GOOGLE_SHEETS_API_KEY;
 
 // Updated spreadsheet ID and range to include event-specific data
 const spreadsheetId = '1vXIX0_Hx27HQRoMtSdJ22DtCfohYgafZENaddj6RKSI';
-const range = 'WTB2.0!A2:G';
+const range = 'WTB2.0!A1:J';
 
 const columnMapping = {
   'EVENT NAME': 'eventName', // Map to the eventName field in the contactSchema
+  'EVENT ID': 'eventId',
+  'NAME': 'name',
   'EMAIL': 'email',
   'PHONE': 'phone',
   'UTM_SOURCE': 'source',
   'LEAD OR REGISTRANT': 'leadOrRegistrant',
-  'COACH': 'assignedTo',
+  'COACH': 'coachName',
   'COACH EMAIL': 'coachEmail', // Assuming you want to add this field
 };
 
 async function fetchAndSaveContactData(eventId) {
   try {
+    console.log(`Fetching and importing contacts for event with ID: ${eventId}`);
+
     // Find the event by ID
     const event = await Event.findById(eventId);
 
@@ -27,6 +31,8 @@ async function fetchAndSaveContactData(eventId) {
       console.log('Event not found.');
       return;
     }
+
+    console.log(`Found event: ${event.name}`);
 
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId,
@@ -36,6 +42,8 @@ async function fetchAndSaveContactData(eventId) {
 
     const rows = response.data.values;
     if (rows.length > 1) {
+      console.log(`Found ${rows.length - 1} contacts in the sheet.`);
+
       for (const row of rows.slice(1)) {
         let newContactData = {};
 
@@ -55,7 +63,11 @@ async function fetchAndSaveContactData(eventId) {
         if (!existingContact) {
           // Create a new contact associated with the event
           event.contacts.push(newContactData);
-          await event.save();
+
+          // Create a standalone Contact document and save it to the "contacts" collection
+          const newContact = new Contact(newContactData);
+          await newContact.save();
+
           console.log(`Imported new contact: ${newContactData.email}`);
         } else {
           console.log(
@@ -63,6 +75,9 @@ async function fetchAndSaveContactData(eventId) {
           );
         }
       }
+
+      // Save the modified event (with embedded contacts) to the events collection
+      await event.save();
 
       console.log('Contacts imported successfully.');
     } else {

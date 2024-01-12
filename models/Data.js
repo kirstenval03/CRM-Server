@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose; // Import Schema from Mongoose
 
-const contactSchema = new Schema({
+const contactSchema = new Schema({ 
   event: {
     eventId: { type: Schema.Types.ObjectId, ref: 'Event' }, // Reference the 'Event' model
     eventName: { type: Schema.Types.ObjectId, ref: 'Event' }, // Reference the 'Event' model for event name
@@ -11,7 +11,8 @@ const contactSchema = new Schema({
   phone: String,
   source: String,
   leadOrRegistrant: String,
-  assignedTo: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    coachName: String,
+    coachEmail: String,
   statusColor: [
     {
       type: String,

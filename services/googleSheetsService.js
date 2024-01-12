@@ -16,6 +16,9 @@ const columnMapping = {
     'DATE': 'date',
     'VIP': 'vip',
     'UTM SOURCE': 'utmSource', 
+    'COACH': 'coachName',
+    'COACH EMAIL': 'coachEmail',
+
 };
 
 async function fetchAndSaveCustomerData() {
