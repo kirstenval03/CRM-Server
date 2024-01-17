@@ -2,8 +2,22 @@ const express = require('express');
 const router = express.Router();
 const Module = require('../models/Academy'); // Assuming you've named your model 'Modules'
 
+
+// Get all lessons within a module
+router.get('/modules/:moduleId/lessons', async (req, res) => {
+  try {
+    const module = await Module.findById(req.params.moduleId);
+    if (!module) {
+      return res.status(404).json({ error: 'Module not found' });
+    }
+
+    res.json(module.lessons);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 // Create a new lesson within a module
-router.post('/modules/:moduleId/lessons', async (req, res) => {
+router.post('/modules/:moduleId/new-lesson', async (req, res) => {
   try {
     const module = await Module.findById(req.params.moduleId);
     if (!module) {
@@ -19,19 +33,7 @@ router.post('/modules/:moduleId/lessons', async (req, res) => {
   }
 });
 
-// Get all lessons within a module
-router.get('/modules/:moduleId/lessons', async (req, res) => {
-  try {
-    const module = await Module.findById(req.params.moduleId);
-    if (!module) {
-      return res.status(404).json({ error: 'Module not found' });
-    }
 
-    res.json(module.lessons);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
 
 // Get a specific lesson within a module by ID
 router.get('/modules/:moduleId/lessons/:lessonId', async (req, res) => {

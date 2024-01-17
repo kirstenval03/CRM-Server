@@ -3,7 +3,7 @@ const { Schema, model } = require('mongoose');
 //Schema for lessons 
 const lessonSchema = new Schema({
     title: String,
-    vimeoLink: String, 
+    vimeoLink: Number, 
 }, {
     timestamps: true
 });
