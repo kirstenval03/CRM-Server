@@ -31,6 +31,9 @@ const userSchema = new Schema({
     position:{
         type: String,
     },
+    phoneNumber:{
+        type: String,
+    },
     role: {
         type: String,
         enum: [userRoles.ADMIN, userRoles.SALES_COACH, userRoles.ACADEMY_MEMBER],

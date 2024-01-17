@@ -10,11 +10,11 @@ const User = require("../models/User");
 const saltRounds = 10;
 
 router.post("/signup", async (req, res, next) => {
-  const { email, password, firstName, lastName } = req.body;
+  const { email, password, firstName, lastName, phoneNumber, position } = req.body;
 
   // Validation
-  if (!email || !password || !firstName || !lastName) {
-    return res.status(400).json({ message: "Provide email, password, first name, and last name." });
+  if (!email || !password || !firstName || !lastName || !position) {
+    return res.status(400).json({ message: "Provide email, password, first name, last name, phone number, and position." });
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -35,10 +35,12 @@ router.post("/signup", async (req, res, next) => {
 
     // CREATE USER
     const newUser = await User.create({
-      email: email.toLowerCase(), // Store email in lowercase
+      email: email.toLowerCase(), 
       password: hashedPassword,
       firstName,
       lastName,
+      phoneNumber,
+      position,
       role
     });
 
