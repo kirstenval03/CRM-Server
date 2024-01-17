@@ -6,16 +6,15 @@ const isAuthenticated = async (req, res, next) => {
   if (!token || token === "null") {
     return res.status(400).json({ message: "Token not found" });
   }
- 
+
   try {
     const tokenInfo = jwt.verify(token, process.env.SECRET);
-    req.user = tokenInfo;
-    next();
+    req.user = tokenInfo; // Assign user information to req.user
+    next(); // Continue to the next middleware
   } catch (error) {
-    console.log(error.message, "Error.message")
-    return res.status(401).json(error);
+    console.error("Error verifying token:", error);
+    return res.status(401).json({ message: "Unauthorized" });
   }
-  
 };
 
 module.exports = isAuthenticated;
