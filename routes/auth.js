@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 
 const isAuthenticated = require("../middleware/isAuthenticated");
 const User = require("../models/User");
+const Progress = require("../models/Progress")
 
 const saltRounds = 10;
 
@@ -41,8 +42,21 @@ router.post("/signup", async (req, res, next) => {
       lastName,
       phoneNumber,
       position,
-      role
+      role,
     });
+
+    // CREATE PROGRESS DOCUMENT
+    const progress = await Progress.create({
+      userId: newUser._id,
+      completedLessons: [],
+    });
+
+    // Update the user's progress field with the ID of the newly created Progress document
+    newUser.progress = progress._id;
+
+    // Save the user to update the progress field
+    await newUser.save();
+
 
     const payload = { email: newUser.email, _id: newUser._id, firstName: newUser.firstName, lastName: newUser.lastName, role: newUser.role };
     const authToken = jwt.sign(payload, process.env.SECRET, {
