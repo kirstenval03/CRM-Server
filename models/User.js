@@ -1,6 +1,5 @@
 const { Schema, model } = require('mongoose');
 
-
 const userRoles = {
     ADMIN: 'admin',
     SALES_COACH: 'sales_coach',
@@ -28,17 +27,22 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
-    position:{
+    position: {
         type: String,
     },
-    phoneNumber:{
+    phoneNumber: {
         type: String,
     },
     role: {
         type: String,
         enum: [userRoles.ADMIN, userRoles.SALES_COACH, userRoles.ACADEMY_MEMBER],
         required: true
-    }
+    },
+    // Reference to track progress for academy members
+    progress: {
+        type: Schema.Types.ObjectId,
+        ref: 'Progress',
+    },
 }, {
     timestamps: true
 });
@@ -59,4 +63,3 @@ userSchema.pre('save', async function (next) {
 });
 
 module.exports = model('User', userSchema);
- 

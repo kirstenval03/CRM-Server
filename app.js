@@ -13,7 +13,10 @@ var eventRouter = require('./routes/event');
 var contactRouter = require('./routes/contact'); 
 
 var modulesRouter = require('./routes/modules'); 
-var lessonRouter = require('./routes/lesson'); 
+var lessonRouter = require('./routes/lesson');
+
+// Import the progress router
+var progressRouter = require('./routes/progress');
 
 var app = express();
 
@@ -41,6 +44,10 @@ app.use('/contact', contactRouter); // Use the new contact router
 
 app.use('/modules', modulesRouter );
 app.use('/lesson', lessonRouter);
+
+// Use the progress router for progress-related routes
+app.use('/progress', progressRouter);
+
 // ...
 
 mongoose
@@ -53,3 +60,4 @@ mongoose
   });
 
 module.exports = app;
+

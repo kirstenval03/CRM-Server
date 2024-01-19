@@ -4,6 +4,10 @@ const { Schema, model } = require('mongoose');
 const lessonSchema = new Schema({
     title: String,
     vimeoLink: Number, 
+    completedBy: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+    }],
 }, {
     timestamps: true
 });
@@ -15,6 +19,7 @@ const moduleSchema = new Schema({
 }, {
     timestamps: true
 });
+
 
 
 

@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const User = require("../models/User");
 const isAuthenticated = require('../middleware/isAuthenticated');
+const isAdmin = require('../middleware/isAdmin'); 
 
 /* GET current authenticated user. */
 router.get('/current', isAuthenticated, async (req, res) => {
@@ -46,8 +47,9 @@ router.get('/all', isAuthenticated, async (req, res) => {
   }
 });
 
-// PUT route to update a user by ID
-router.put('/:userId', isAuthenticated, async (req, res) => {
+
+// UPDATE USER 
+router.post('/:userId', isAuthenticated, isAdmin,  async (req, res) => {
   try {
     // Get the user ID from the request parameters
     const userId = req.params.userId;
@@ -70,6 +72,33 @@ router.put('/:userId', isAuthenticated, async (req, res) => {
     res.json(updatedUser);
   } catch (error) {
     console.error('Error updating user:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// DELETE USER
+router.delete('/delete/:userId', isAuthenticated, isAdmin, async (req, res) => {
+  try {
+    // Get the user ID from the request parameters
+    const userId = req.params.userId;
+
+    // Check if the authenticated user is allowed to perform this delete operation
+    if (req.user._id.toString() !== userId.toString()) {
+      return res.status(403).json({ error: 'Access denied. You can only delete your own profile.' });
+    }
+
+    // Find the user by ID and delete them
+    const deletedUser = await User.findByIdAndDelete(userId);
+
+    // Check if the user was found and deleted
+    if (!deletedUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Return a success message
+    res.json({ message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting user:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
