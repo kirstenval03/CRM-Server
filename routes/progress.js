@@ -27,4 +27,51 @@ router.post('/complete-lesson', isAuthenticated, async (req, res) => {
   }
 });
 
+router.delete('/unmark-lesson/:lessonId', isAuthenticated, async (req, res) => {
+    try {
+      const userId = req.user._id;
+      const lessonId = req.params.lessonId; // Get lessonId from URL parameters
+  
+      // Find the user's progress based on their userId
+      const userProgress = await Progress.findOne({ userId });
+  
+      // Check if the lesson is in the completedLessons array
+      if (!userProgress.completedLessons.includes(lessonId)) {
+        return res.status(400).json({ error: 'Lesson is not marked as completed' });
+      }
+  
+      // Remove the lesson from the completedLessons array
+      userProgress.completedLessons = userProgress.completedLessons.filter(
+        (completedLessonId) => completedLessonId.toString() !== lessonId.toString()
+      );
+  
+      // Save the updated progress to the database
+      await userProgress.save();
+  
+      res.json({ message: 'Lesson unmarked as completed' });
+    } catch (error) {
+      console.error('Error unmarking lesson as completed:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
+  // Route to get a user's progress
+router.get('/user-progress/:userId', isAuthenticated, async (req, res) => {
+    try {
+      const userId = req.params.userId; // Get userId from URL parameters
+  
+      // Find the user's progress based on their userId
+      const userProgress = await Progress.findOne({ userId });
+  
+      if (!userProgress) {
+        return res.status(404).json({ error: 'User progress not found' });
+      }
+  
+      res.json(userProgress);
+    } catch (error) {
+      console.error('Error fetching user progress:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
 module.exports = router;
