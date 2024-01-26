@@ -12,7 +12,7 @@ const isAuthenticated = async (req, res, next) => {
 
   try {
     const tokenInfo = jwt.verify(token, process.env.SECRET);
-    
+
     // Log the token information for debugging
     console.log("Token Info:", tokenInfo);
 
@@ -29,4 +29,5 @@ const isAuthenticated = async (req, res, next) => {
 };
 
 module.exports = isAuthenticated;
+
 
