@@ -35,7 +35,7 @@ router.get('/:eventId', (req, res, next) => {
 });
 
 // VIEW CONTACT DETAILS
-router.get('/contact-detail/contactId', (req, res, next) => {
+router.get('/contact-detail/:contactId', (req, res, next) => {
   const { contactId } = req.params;
 
   Contact.findById(contactId)
@@ -88,35 +88,32 @@ router.post('/new-contact/:eventId', async (req, res, next) => {
 });
 
 // UPDATE CONTACT INFO
-router.post('/contact-update/:contactId', (req, res, next) => {
-  const { contactId } = req.params;
+router.post('/contact-update/:eventId/:contactId', async (req, res, next) => {
+  const { eventId, contactId } = req.params;
+  const updatedContactData = req.body;
 
-  const { name, email, phone, source, leadOrRegistrant, assignedTo, statusColor, columnId } = req.body;
+  try {
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
 
-  Contact.findByIdAndUpdate(
-    contactId,
-    {
-      name,
-      email,
-      phone,
-      source,
-      leadOrRegistrant,
-      assignedTo,
-      statusColor,
-      columnId,
-    },
-    { new: true }
-  )
-    .then((updatedContact) => {
-      if (!updatedContact) {
-        return res.status(404).json({ message: 'Contact not found' });
-      }
-      res.json(updatedContact);
-    })
-    .catch((err) => {
-      console.error(err);
-      next(err);
-    });
+    // Find the index of the contact within the event's contacts array
+    const contactIndex = event.contacts.findIndex(contact => contact._id.toString() === contactId);
+    if (contactIndex === -1) {
+      return res.status(404).json({ message: 'Contact not found' });
+    }
+
+    // Update the contact's information
+    event.contacts[contactIndex] = { ...event.contacts[contactIndex], ...updatedContactData };
+    await event.save();
+
+    // Respond with the updated contact
+    res.json(event.contacts[contactIndex]);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
 });
 
 // DELETE CONTACT
