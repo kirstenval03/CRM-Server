@@ -35,7 +35,13 @@ const eventSchema = new Schema({
     driveFolder: String,
     active: Boolean,
     coaches: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    contacts: [contactSchema], // Embed contacts within events
+    contacts: [contactSchema], 
+    eventLinks: [
+      {
+          title: String,
+          link: String
+      }
+  ]
 });
 
 const clientSchema = new Schema({
