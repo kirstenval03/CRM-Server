@@ -6,18 +6,22 @@ const API_KEY = process.env.GOOGLE_SHEETS_API_KEY;
 
 // Updated spreadsheet ID and range to include event-specific data
 const spreadsheetId = '1vXIX0_Hx27HQRoMtSdJ22DtCfohYgafZENaddj6RKSI';
-const range = 'WTB2.0!A1:J';
+const range = 'EVENTDATA!A1:M';
 
 const columnMapping = {
   'EVENT NAME': 'eventName', // Map to the eventName field in the contactSchema
   'EVENT ID': 'eventId',
-  'NAME': 'name',
+  'FIRST NAME': 'firstName',
+  'LAST NAME': 'lastName',
   'EMAIL': 'email',
   'PHONE': 'phone',
+  'TICKET REVENUE': 'ticketRevenue',
+  'VIP': 'vip',
   'UTM_SOURCE': 'source',
-  'LEAD OR REGISTRANT': 'leadOrRegistrant',
+  'COUNTRY': 'country',
+  'STATE': 'state',
   'COACH': 'coachName',
-  'COACH EMAIL': 'coachEmail', // Assuming you want to add this field
+  'COACH EMAIL': 'coachEmail', 
 };
 
 async function fetchAndSaveContactData(eventId) {

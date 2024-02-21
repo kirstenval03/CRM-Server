@@ -54,7 +54,7 @@ router.get('/contact-detail/:contactId', (req, res, next) => {
 // CREATE A NEW CONTACT FOR A SPECIFIC EVENT
 router.post('/new-contact/:eventId', async (req, res, next) => {
   const { eventId } = req.params;
-  const { name, email, phone, source, leadOrRegistrant, assignedTo, statusColor, columnId } = req.body;
+  const { firstName, lastName, email, phone, ticketRevenue, vip, source, country, state, pipelineStatus, notes, coachName, coachEmail, statusColor, columnId } = req.body;
 
   try {
     const event = await Event.findById(eventId);
@@ -63,12 +63,19 @@ router.post('/new-contact/:eventId', async (req, res, next) => {
     }
 
     const newContact = new Contact({
-      name,
+      firstName,
+      lastName,
       email,
       phone,
+      ticketRevenue,
+      vip,
       source,
-      leadOrRegistrant,
-      assignedTo,
+      country,
+      state,
+      pipelineStatus,
+      notes,
+      coachName,
+      coachEmail,
       statusColor,
       columnId,
       event: { eventId: event._id, eventName: event.name }, // Reference the event

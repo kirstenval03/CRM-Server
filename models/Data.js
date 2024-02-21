@@ -1,18 +1,25 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose; // Import Schema from Mongoose
 
+
 const contactSchema = new Schema({ 
   event: {
     eventId: { type: Schema.Types.ObjectId, ref: 'Event' }, // Reference the 'Event' model
     eventName: { type: Schema.Types.ObjectId, ref: 'Event' }, // Reference the 'Event' model for event name
   },
-  name: String,
+  firstName: String,
+  lastName: String,
   email: String,
   phone: String,
+  ticketRevenue: Number,
+  vip: String,
   source: String,
-  leadOrRegistrant: String,
-    coachName: String,
-    coachEmail: String,
+  country: String,
+  state: String,
+  coachName: String,
+  coachEmail: String,
+  pipelineStatus: String,
+  notes: String,
   statusColor: [
     {
       type: String,
