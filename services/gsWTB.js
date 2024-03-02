@@ -6,6 +6,8 @@ const API_KEY = process.env.GOOGLE_SHEETS_API_KEY;
 
 // Updated spreadsheet ID and range to include event-specific data
 const spreadsheetId = '1vXIX0_Hx27HQRoMtSdJ22DtCfohYgafZENaddj6RKSI';
+
+
 const range = 'EVENTDATA!A1:M';
 
 const columnMapping = {

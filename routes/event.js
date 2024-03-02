@@ -34,7 +34,7 @@ router.get('/event-detail/:eventId', (req, res, next) => {
 // CREATE A NEW EVENT
 router.post('/new-event', async (req, res, next) => {
   try {
-    const { name, initials, edition, date, driveFolder, active, coaches, clientId, clientName } = req.body;
+    const { name, initials, edition, date, driveFolder, active, spreadsheetID, coaches, clientId, clientName } = req.body;
 
     // Create the event with an empty eventLinks array
     const newEvent = new Event({
@@ -45,6 +45,7 @@ router.post('/new-event', async (req, res, next) => {
       date,
       driveFolder,
       active,
+      spreadsheetID,
       coaches,
       eventLinks: [] // Initialize eventLinks as an empty array
     });
@@ -82,7 +83,7 @@ router.post('/event-update/:eventId', async (req, res, next) => {
     // Find the event by ID
     const updatedEvent = await Event.findByIdAndUpdate(
       eventId,
-      { name, initials, edition, date, driveFolder, active, coaches, eventLinks },
+      { name, initials, edition, date, driveFolder, active,spreadsheetID, coaches, eventLinks },
       { new: true }
     );
 

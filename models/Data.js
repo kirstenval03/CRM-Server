@@ -41,6 +41,7 @@ const eventSchema = new Schema({
     date: Date,
     driveFolder: String,
     active: Boolean,
+    spreadsheetID: String, 
     coaches: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     contacts: [contactSchema], 
     eventLinks: [
