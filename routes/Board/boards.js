@@ -5,59 +5,66 @@ const { Board } = require('../../models/Board');
 // Route for getting a user's board
 router.get('/user/:userId', async (req, res) => {
     try {
-      const { userId } = req.params; // Extract userId from the request parameters
-  
-      // Find the board associated with the user ID
-      const board = await Board.findOne({ userId }).populate('columns.taskIds');
-  
-      if (!board) {
-        return res.status(404).json({ error: 'Board not found' });
-      }
-  
-      res.json(board); // Send the user's board as the response
-    } catch (error) {
-      console.error('Error getting user board:', error);
-      res.status(500).json({ error: 'An error occurred while getting the user board' });
-    }
-  });
+        const { userId } = req.params; // Extract userId from the request parameters
 
+        // Find the board associated with the user ID
+        let board = await Board.findOne({ userId }).populate('columns.tasks');
+
+        if (!board) {
+            // If the board doesn't exist, create a new board with at least one column
+            const newColumn = { title: 'Default Column', tasks: [] };
+            const columns = [newColumn]; // You can add more columns if needed
+
+            // Create a new board instance
+            board = new Board({ userId, columns });
+
+            // Save the new board to the database
+            board = await board.save();
+        }
+
+        res.json(board); // Send the user's board as the response
+    } catch (error) {
+        console.error('Error getting user board:', error);
+        res.status(500).json({ error: 'An error occurred while getting the user board' });
+    }
+});
 
 // Route for creating a new board
 router.post('/', async (req, res) => {
-  try {
-    const { userId, columns } = req.body; // Extract userId and columns from the request body
+    try {
+        const { userId, columns } = req.body; // Extract userId and columns from the request body
 
-    // Create a new board instance
-    const newBoard = new Board({ userId, columns });
+        // Create a new board instance
+        const newBoard = new Board({ userId, columns });
 
-    // Save the new board to the database
-    const savedBoard = await newBoard.save();
+        // Save the new board to the database
+        const savedBoard = await newBoard.save();
 
-    res.status(201).json(savedBoard); // Send the saved board as the response
-  } catch (error) {
-    console.error('Error creating board:', error);
-    res.status(500).json({ error: 'An error occurred while creating the board' });
-  }
+        res.status(201).json(savedBoard); // Send the saved board as the response
+    } catch (error) {
+        console.error('Error creating board:', error);
+        res.status(500).json({ error: 'An error occurred while creating the board' });
+    }
 });
 
 // Route for updating an existing board
 router.put('/board-update/:boardId', async (req, res) => {
-  try {
-    const { boardId } = req.params; // Extract boardId from the request parameters
-    const { columns } = req.body; // Extract updated columns from the request body
+    try {
+        const { boardId } = req.params; // Extract boardId from the request parameters
+        const { columns } = req.body; // Extract updated columns from the request body
 
-    // Find the board by its ID and update it with the new columns
-    const updatedBoard = await Board.findByIdAndUpdate(boardId, { columns }, { new: true });
+        // Find the board by its ID and update it with the new columns
+        const updatedBoard = await Board.findByIdAndUpdate(boardId, { columns }, { new: true });
 
-    if (!updatedBoard) {
-      return res.status(404).json({ error: 'Board not found' });
+        if (!updatedBoard) {
+            return res.status(404).json({ error: 'Board not found' });
+        }
+
+        res.json(updatedBoard); // Send the updated board as the response
+    } catch (error) {
+        console.error('Error updating board:', error);
+        res.status(500).json({ error: 'An error occurred while updating the board' });
     }
-
-    res.json(updatedBoard); // Send the updated board as the response
-  } catch (error) {
-    console.error('Error updating board:', error);
-    res.status(500).json({ error: 'An error occurred while updating the board' });
-  }
 });
 
 module.exports = router;

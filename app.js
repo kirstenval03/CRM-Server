@@ -12,8 +12,11 @@ var clientRouter = require('./routes/client');
 var eventRouter = require('./routes/event');
 
 var contactRouter = require('./routes/contact'); 
-var linkRouter = require('./routes/links')
-var boardRouter = require('./routes/Board/boards')
+var linkRouter = require('./routes/links');
+
+var boardRouter = require('./routes/Board/boards');
+var columnRouter = require('./routes/Board/columns');
+var taskRouter = require('./routes/Board/tasks');
 
 
 var modulesRouter = require('./routes/modules'); 
@@ -48,6 +51,8 @@ app.use('/contact', contactRouter);
 app.use('/link', linkRouter);
 
 app.use('/board', boardRouter);
+app.use('/column', columnRouter);
+app.use('/task', taskRouter);
 
 app.use('/modules', modulesRouter );
 app.use('/lesson', lessonRouter);
