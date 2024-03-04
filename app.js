@@ -10,8 +10,11 @@ var authRouter = require('./routes/auth');
 var usersRouter = require('./routes/users');
 var clientRouter = require('./routes/client');
 var eventRouter = require('./routes/event');
+
 var contactRouter = require('./routes/contact'); 
 var linkRouter = require('./routes/links')
+var boardRouter = require('./routes/Board/boards')
+
 
 var modulesRouter = require('./routes/modules'); 
 var lessonRouter = require('./routes/lesson');
@@ -41,8 +44,10 @@ app.use('/users', usersRouter);
 app.use('/auth', authRouter);
 app.use('/event', eventRouter);
 app.use('/client', clientRouter);
-app.use('/contact', contactRouter); // Use the new contact router
-app.use('/link', linkRouter)
+app.use('/contact', contactRouter); 
+app.use('/link', linkRouter);
+
+app.use('/board', boardRouter);
 
 app.use('/modules', modulesRouter );
 app.use('/lesson', lessonRouter);
@@ -50,7 +55,7 @@ app.use('/lesson', lessonRouter);
 // Use the progress router for progress-related routes
 app.use('/progress', progressRouter);
 
-// ...
+
 
 mongoose
   .connect(process.env.MONGODB_URI)

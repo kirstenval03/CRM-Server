@@ -16,7 +16,7 @@ router.get('/import-from-google-sheets/:eventId', async (req, res) => {
   }
 });
 
-// LIST ALL CONTACTS FOR A SPECIFIC EVENT
+// LIST ALL CONTACTS FOR A SPECIFIC EVENT (TABLE VIEW)
 router.get('/:eventId', (req, res, next) => {
   const { eventId } = req.params;
 
@@ -32,6 +32,32 @@ router.get('/:eventId', (req, res, next) => {
       console.error(err);
       next(err);
     });
+});
+
+
+// LIST ALL CONTACTS FOR A SPECIFIC EVENT (BOARD VIEW)
+router.get('/board/:eventId', async (req, res, next) => {
+  console.log('Received request for board contacts'); 
+  try {
+    const { eventId } = req.params;
+    const event = await Event.findById(eventId).populate('contacts');
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+
+    // Format contacts as cards for the kanban board
+    const kanbanBoardData = event.contacts.map((contact) => ({
+      id: contact._id,
+      title: `${contact.firstName} ${contact.lastName}`,
+      description: contact.email,
+      // You can add more properties here as needed for your kanban board
+    }));
+
+    res.json(kanbanBoardData);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
 });
 
 // VIEW CONTACT DETAILS
@@ -142,6 +168,7 @@ router.delete('/delete-contact/:contactId', (req, res, next) => {
 
 // Display contacts in kanban board view
 router.get('/board/:eventId', async (req, res, next) => {
+  console.log('Received request for board contacts'); 
   try {
     const { eventId } = req.params;
     const event = await Event.findById(eventId).populate('contacts');
