@@ -2,13 +2,13 @@ const express = require('express');
 const router = express.Router();
 const { Board, Column } = require('../../models/Board');
 
-// Route for getting all columns within a board
-router.get('/:boardId', async (req, res) => {
+// Route for getting all columns within an event's board
+router.get('/:eventId', async (req, res) => {
     try {
-        const { boardId } = req.params; // Extract boardId from the request parameters
+        const { eventId } = req.params; // Extract eventId from the request parameters
 
-        // Find the board by its ID
-        const board = await Board.findById(boardId).populate('columns.tasks');
+        // Find the board by its event ID
+        const board = await Board.findOne({ eventId }).populate('columns.tasks');
 
         if (!board) {
             return res.status(404).json({ error: 'Board not found' });
@@ -21,14 +21,14 @@ router.get('/:boardId', async (req, res) => {
     }
 });
 
-// Route for creating a new column
-router.post('/:boardId', async (req, res) => {
+// Route for creating a new column within an event's board
+router.post('/:eventId', async (req, res) => {
     try {
-        const { boardId } = req.params; // Extract boardId from the request parameters
+        const { eventId } = req.params; // Extract eventId from the request parameters
         const { title } = req.body; // Extract title from the request body
 
-        // Find the board by its ID
-        const board = await Board.findById(boardId);
+        // Find the board by its event ID
+        const board = await Board.findOne({ eventId });
 
         if (!board) {
             return res.status(404).json({ error: 'Board not found' });
@@ -50,14 +50,14 @@ router.post('/:boardId', async (req, res) => {
     }
 });
 
-// Route for updating an existing column
-router.put('/:boardId/:columnId', async (req, res) => {
+// Route for updating an existing column within an event's board
+router.put('/:eventId/:columnId', async (req, res) => {
     try {
-        const { boardId, columnId } = req.params; // Extract boardId and columnId from the request parameters
+        const { eventId, columnId } = req.params; // Extract eventId and columnId from the request parameters
         const { title } = req.body; // Extract updated title from the request body
 
-        // Find the board by its ID
-        const board = await Board.findById(boardId);
+        // Find the board by its event ID
+        const board = await Board.findOne({ eventId });
 
         if (!board) {
             return res.status(404).json({ error: 'Board not found' });
@@ -83,13 +83,13 @@ router.put('/:boardId/:columnId', async (req, res) => {
     }
 });
 
-// Route for deleting a column
-router.delete('/:boardId/columns/:columnId', async (req, res) => {
+// Route for deleting a column within an event's board
+router.delete('/:eventId/columns/:columnId', async (req, res) => {
     try {
-        const { boardId, columnId } = req.params; // Extract boardId and columnId from the request parameters
+        const { eventId, columnId } = req.params; // Extract eventId and columnId from the request parameters
 
-        // Find the board by its ID
-        const board = await Board.findById(boardId);
+        // Find the board by its event ID
+        const board = await Board.findOne({ eventId });
 
         if (!board) {
             return res.status(404).json({ error: 'Board not found' });

@@ -2,13 +2,16 @@ const express = require('express');
 const router = express.Router();
 const { Board } = require('../../models/Board');
 
-// Route for getting a user's board
-router.get('/user/:userId', async (req, res) => {
+// GET AN EVENT BOARD
+router.get('/event/:eventId', async (req, res) => {
     try {
-        const { userId } = req.params; // Extract userId from the request parameters
+        const { eventId } = req.params; // Extract eventId from the request parameters
 
-        // Find the board associated with the user ID
-        let board = await Board.findOne({ userId }).populate('columns.tasks');
+        // Find the board associated with the event ID
+        let board = await Board.findOne({ eventId }).populate({
+            path: 'columns',
+            populate: { path: 'tasks' }
+        });
 
         if (!board) {
             // If the board doesn't exist, create a new board with at least one column
@@ -16,26 +19,26 @@ router.get('/user/:userId', async (req, res) => {
             const columns = [newColumn]; // You can add more columns if needed
 
             // Create a new board instance
-            board = new Board({ userId, columns });
+            board = new Board({ eventId, columns });
 
             // Save the new board to the database
             board = await board.save();
         }
 
-        res.json(board); // Send the user's board as the response
+        res.json(board); // Send the event's board as the response
     } catch (error) {
-        console.error('Error getting user board:', error);
-        res.status(500).json({ error: 'An error occurred while getting the user board' });
+        console.error('Error getting event board:', error);
+        res.status(500).json({ error: 'An error occurred while getting the event board' });
     }
 });
 
-// Route for creating a new board
+// CREATE AN EVENT BOARD
 router.post('/', async (req, res) => {
     try {
-        const { userId, columns } = req.body; // Extract userId and columns from the request body
+        const { eventId, columns } = req.body; // Extract eventId and columns from the request body
 
         // Create a new board instance
-        const newBoard = new Board({ userId, columns });
+        const newBoard = new Board({ eventId, columns });
 
         // Save the new board to the database
         const savedBoard = await newBoard.save();
@@ -47,7 +50,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-// Route for updating an existing board
+// UPDATE THE BOARD
 router.put('/board-update/:boardId', async (req, res) => {
     try {
         const { boardId } = req.params; // Extract boardId from the request parameters

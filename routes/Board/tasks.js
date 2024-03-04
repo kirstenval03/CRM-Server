@@ -3,11 +3,11 @@ const router = express.Router();
 const { Board } = require('../../models/Board');
 
 // Route for getting all tasks within a column
-router.get('/:boardId/column/:columnId', async (req, res) => {
+router.get('/:eventId/column/:columnId', async (req, res) => {
   try {
-    const { boardId, columnId } = req.params;
+    const { eventId, columnId } = req.params;
 
-    const board = await Board.findById(boardId);
+    const board = await Board.findOne({ eventId });
 
     if (!board) {
       return res.status(404).json({ error: 'Board not found' });
@@ -27,12 +27,12 @@ router.get('/:boardId/column/:columnId', async (req, res) => {
 });
 
 //CREATE A TASK
-router.post('/:boardId/column/:columnId', async (req, res) => {
+router.post('/:eventId/column/:columnId', async (req, res) => {
   try {
-    const { boardId, columnId } = req.params;
-    const { contactId, indexPosition } = req.body;
+    const { eventId, columnId } = req.params;
+    const { contacts, indexPosition } = req.body;
 
-    const board = await Board.findById(boardId);
+    const board = await Board.findOne({ eventId });
 
     if (!board) {
       return res.status(404).json({ error: 'Board not found' });
@@ -45,7 +45,7 @@ router.post('/:boardId/column/:columnId', async (req, res) => {
     }
 
     // Create a new task directly within the column
-    column.tasks.push({ contact: contactId, indexPosition });
+    column.tasks.push({ contacts, indexPosition });
 
     await board.save();
 
@@ -57,12 +57,12 @@ router.post('/:boardId/column/:columnId', async (req, res) => {
 });
 
 //UPDATE A TASK
-router.put('/:boardId/column/:columnId/:taskId', async (req, res) => {
+router.put('/:eventId/column/:columnId/:taskId', async (req, res) => {
   try {
-    const { boardId, columnId, taskId } = req.params;
-    const { contactId, indexPosition } = req.body;
+    const { eventId, columnId, taskId } = req.params;
+    const { contacts, indexPosition } = req.body;
 
-    const board = await Board.findById(boardId);
+    const board = await Board.findOne({ eventId });
 
     if (!board) {
       return res.status(404).json({ error: 'Board not found' });
@@ -81,8 +81,8 @@ router.put('/:boardId/column/:columnId/:taskId', async (req, res) => {
     }
 
     // Update task properties directly
-    if (contactId) {
-      taskToUpdate.contact = contactId;
+    if (contacts) {
+      taskToUpdate.contacts = contacts;
     }
     if (indexPosition) {
       taskToUpdate.indexPosition = indexPosition;
@@ -98,11 +98,11 @@ router.put('/:boardId/column/:columnId/:taskId', async (req, res) => {
 });
 
 //DELETE TASKS
-router.delete('/:boardId/column/:columnId/:taskId', async (req, res) => {
+router.delete('/:eventId/column/:columnId/:taskId', async (req, res) => {
   try {
-    const { boardId, columnId, taskId } = req.params;
+    const { eventId, columnId, taskId } = req.params;
 
-    const board = await Board.findById(boardId);
+    const board = await Board.findOne({ eventId });
 
     if (!board) {
       return res.status(404).json({ error: 'Board not found' });
