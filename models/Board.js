@@ -1,12 +1,10 @@
 const { Schema, model } = require('mongoose');
-const { Contact } = require('./Data'); 
 
 // Define Task schema
 const taskSchema = new Schema({
-    contacts: [Contact.schema], // Embed contact data directly
+    contact: { type: Schema.Types.ObjectId, ref: 'Contact' }, // Reference to the Contact schema
     indexPosition: Number,
 });
-
 
 // Define Column schema with a reference to Task
 const columnSchema = new Schema({
@@ -21,8 +19,6 @@ const boardSchema = new Schema({
     eventName: { type: Schema.Types.ObjectId, ref: 'Event' }, // Reference to Event schema
     columns: [columnSchema], // Array of columns
 });
-
- 
 
 const Board = model('Board', boardSchema);
 const Column = model('Column', columnSchema);

@@ -22,7 +22,7 @@ router.get('/:eventId', async (req, res) => {
 });
 
 // Route for creating a new column within an event's board
-router.post('/:eventId', async (req, res) => {
+router.post('/event/:eventId', async (req, res) => {
     try {
         const { eventId } = req.params; // Extract eventId from the request parameters
         const { title } = req.body; // Extract title from the request body

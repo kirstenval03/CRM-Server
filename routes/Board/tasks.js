@@ -7,7 +7,10 @@ router.get('/:eventId/column/:columnId', async (req, res) => {
   try {
     const { eventId, columnId } = req.params;
 
-    const board = await Board.findOne({ eventId });
+    const board = await Board.findOne({ eventId }).populate({
+      path: 'columns.tasks.contact', // Populate the contact field of each task
+      select: 'firstName lastName email', // Select fields to populate
+    });
 
     if (!board) {
       return res.status(404).json({ error: 'Board not found' });
@@ -30,7 +33,7 @@ router.get('/:eventId/column/:columnId', async (req, res) => {
 router.post('/:eventId/column/:columnId', async (req, res) => {
   try {
     const { eventId, columnId } = req.params;
-    const { contacts, indexPosition } = req.body;
+    const { contactId, indexPosition } = req.body; // Change 'contacts' to 'contactId'
 
     const board = await Board.findOne({ eventId });
 
@@ -44,8 +47,8 @@ router.post('/:eventId/column/:columnId', async (req, res) => {
       return res.status(404).json({ error: 'Column not found' });
     }
 
-    // Create a new task directly within the column
-    column.tasks.push({ contacts, indexPosition });
+    // Create a new task directly within the column with a reference to the contact
+    column.tasks.push({ contact: contactId, indexPosition }); // Use 'contact' instead of 'contacts'
 
     await board.save();
 
@@ -60,7 +63,7 @@ router.post('/:eventId/column/:columnId', async (req, res) => {
 router.put('/:eventId/column/:columnId/:taskId', async (req, res) => {
   try {
     const { eventId, columnId, taskId } = req.params;
-    const { contacts, indexPosition } = req.body;
+    const { contactId, indexPosition } = req.body; // Change 'contacts' to 'contactId'
 
     const board = await Board.findOne({ eventId });
 
@@ -81,8 +84,8 @@ router.put('/:eventId/column/:columnId/:taskId', async (req, res) => {
     }
 
     // Update task properties directly
-    if (contacts) {
-      taskToUpdate.contacts = contacts;
+    if (contactId) { // Change 'contacts' to 'contactId'
+      taskToUpdate.contact = contactId; // Use 'contact' instead of 'contacts'
     }
     if (indexPosition) {
       taskToUpdate.indexPosition = indexPosition;
