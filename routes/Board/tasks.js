@@ -33,7 +33,7 @@ router.get('/:eventId/column/:columnId', async (req, res) => {
 router.post('/:eventId/column/:columnId', async (req, res) => {
   try {
     const { eventId, columnId } = req.params;
-    const { contactId, indexPosition } = req.body; // Change 'contacts' to 'contactId'
+    const { contactIds, indexPosition } = req.body;
 
     const board = await Board.findOne({ eventId });
 
@@ -47,12 +47,17 @@ router.post('/:eventId/column/:columnId', async (req, res) => {
       return res.status(404).json({ error: 'Column not found' });
     }
 
-    // Create a new task directly within the column with a reference to the contact
-    column.tasks.push({ contact: contactId, indexPosition }); // Use 'contact' instead of 'contacts'
+    // Create tasks for each contact and push them to the column's tasks array
+    const createdTasks = [];
+    for (const contactId of contactIds) {
+      const newTask = new Task({ contact: contactId, indexPosition });
+      column.tasks.push(newTask);
+      createdTasks.push(newTask);
+    }
 
     await board.save();
 
-    res.status(201).json(column.tasks[column.tasks.length - 1]); // Return the newly created task
+    res.status(201).json(createdTasks); // Return the newly created tasks
   } catch (error) {
     console.error('Error creating task:', error);
     res.status(500).json({ error: 'An error occurred while creating the task' });
