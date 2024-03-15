@@ -1,6 +1,7 @@
 const { google } = require('googleapis');
 const { Event, Contact } = require('../models/Data'); // Updated model import
 
+
 const sheets = google.sheets('v4');
 const API_KEY = process.env.GOOGLE_SHEETS_API_KEY;
 
@@ -8,7 +9,7 @@ const API_KEY = process.env.GOOGLE_SHEETS_API_KEY;
 const spreadsheetId = '1vXIX0_Hx27HQRoMtSdJ22DtCfohYgafZENaddj6RKSI';
 
 
-const range = 'EVENTDATA!A1:M';
+const range = 'EVENTDATA!A1:N';
 
 const columnMapping = {
   'EVENT NAME': 'eventName', // Map to the eventName field in the contactSchema
@@ -24,6 +25,7 @@ const columnMapping = {
   'STATE': 'state',
   'COACH': 'coachName',
   'COACH EMAIL': 'coachEmail', 
+  'PIPELINE STATUS': 'pipelineStatus', 
 };
 
 async function fetchAndSaveContactData(eventId) {

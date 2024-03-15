@@ -4,8 +4,8 @@ const { Schema } = mongoose; // Import Schema from Mongoose
 
 const contactSchema = new Schema({ 
   event: {
-      eventId: { type: Schema.Types.ObjectId, ref: 'Event' }, // Reference the 'Event' model
-      eventName: { type: Schema.Types.ObjectId, ref: 'Event' }, // Reference the 'Event' model for event name
+    eventId: { type: Schema.Types.ObjectId, ref: 'Event' }, // Reference the 'Event' model
+    eventName: { type: Schema.Types.ObjectId, ref: 'Event' }, // Reference the 'Event' model for event name
   },
   firstName: String,
   lastName: String,
@@ -18,12 +18,29 @@ const contactSchema = new Schema({
   state: String,
   coachName: String,
   coachEmail: String,
-  pipelineStatus: String,
+  pipelineStatus: {
+    type: String,
+    enum: [
+      'Registrant',
+      '1st Call Booked',
+      '1st Call Taken',
+      '2nd Call Booked',
+      '2nd Call Taken',
+      'Applied',
+      'Lost',
+      'Working-post-call',
+      'Deposit',
+      'Enrolled',
+      'Declined/Not Qualified',
+      'No Show/No Longer Interested'
+    ],
+    default: 'Registrant', // Default value if not provided
+  },
   notes: String,
   statusColor: [{
-      type: String,
-      enum: ['yellow', 'green', 'red', ''],
-      default: '',
+    type: String,
+    enum: ['yellow', 'green', 'red', ''],
+    default: '',
   }],
 });
 

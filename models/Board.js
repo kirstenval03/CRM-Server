@@ -1,19 +1,13 @@
 const { Schema, model } = require('mongoose');
 
-// Define Task schema
-const taskSchema = new Schema({
-    contact: { type: Schema.Types.ObjectId, ref: 'Contact' }, // Reference to the Contact schema
-    indexPosition: Number,
-});
-
-// Define Column schema with a reference to Task
+// Define Column schema with a reference to Contact
 const columnSchema = new Schema({
     title: String,
-    tasks: [taskSchema], // Reference to Task schema
+    contacts: [{ type: Schema.Types.ObjectId, ref: 'Contact' }], // Reference to Contact schema
     indexPosition: Number,
 });
 
-// Define Board schema with references to Column and Task
+// Define Board schema with references to Column and Event
 const boardSchema = new Schema({
     eventId: { type: Schema.Types.ObjectId, ref: 'Event' }, 
     eventName: { type: Schema.Types.ObjectId, ref: 'Event' }, // Reference to Event schema
@@ -22,10 +16,8 @@ const boardSchema = new Schema({
 
 const Board = model('Board', boardSchema);
 const Column = model('Column', columnSchema);
-const Task = model('Task', taskSchema);
 
 module.exports = {
     Board,
     Column,
-    Task,
 };
