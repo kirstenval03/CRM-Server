@@ -147,4 +147,29 @@ router.delete('/delete-contact/:contactId', (req, res, next) => {
     });
 });
 
+// LIST ALL COACHES FOR A SPECIFIC EVENT
+router.get('/coaches/:eventId', async (req, res, next) => {
+  const { eventId } = req.params;
+
+  try {
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+
+    const coachesSet = new Set();
+    event.contacts.forEach((contact) => {
+      coachesSet.add(contact.coachName);
+    });
+    
+    const coaches = [...coachesSet];
+    res.json({ coaches });
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+
+
 module.exports = router;
