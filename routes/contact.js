@@ -170,6 +170,30 @@ router.get('/coaches/:eventId', async (req, res, next) => {
   }
 });
 
+// LIST ALL PIPELINE STATUSES FOR A SPECIFIC EVENT
+router.get('/pipeline-statuses/:eventId', async (req, res, next) => {
+  const { eventId } = req.params;
+
+  try {
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+
+    const pipelineStatusesSet = new Set();
+    event.contacts.forEach((contact) => {
+      pipelineStatusesSet.add(contact.pipelineStatus);
+    });
+
+    const pipelineStatuses = [...pipelineStatusesSet];
+    res.json({ pipelineStatuses });
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+
 
 
 module.exports = router;
