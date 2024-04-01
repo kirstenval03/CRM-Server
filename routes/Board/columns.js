@@ -8,7 +8,7 @@ router.get('/:eventId', async (req, res) => {
         const { eventId } = req.params; // Extract eventId from the request parameters
 
         // Find the board by its event ID
-        const board = await Board.findOne({ eventId }).populate('columns.tasks');
+        const board = await Board.findOne({ eventId }).populate('columns.cards');
 
         if (!board) {
             return res.status(404).json({ error: 'Board not found' });

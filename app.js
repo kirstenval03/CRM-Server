@@ -16,7 +16,7 @@ var linkRouter = require('./routes/links');
 
 var boardRouter = require('./routes/Board/boards');
 var columnRouter = require('./routes/Board/columns');
-var taskRouter = require('./routes/Board/tasks');
+var cardRouter = require('./routes/Board/cards');
 
 
 var modulesRouter = require('./routes/modules'); 
@@ -52,7 +52,7 @@ app.use('/link', linkRouter);
 
 app.use('/board', boardRouter);
 app.use('/column', columnRouter);
-app.use('/task', taskRouter);
+app.use('/card', cardRouter);
 
 app.use('/modules', modulesRouter );
 app.use('/lesson', lessonRouter);
